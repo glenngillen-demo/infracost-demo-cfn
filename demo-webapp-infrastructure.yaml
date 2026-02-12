@@ -24,6 +24,12 @@ Parameters:
     NoEcho: true
     MinLength: 8
 
+  MSSQLPassword:
+    Type: String
+    Description: MSSQL Server admin password
+    NoEcho: true
+    MinLength: 8
+
   EC2KeyPair:
     Type: AWS::EC2::KeyPair::KeyName
     Description: EC2 Key Pair for SSH access to instances
