@@ -496,6 +496,32 @@ Resources:
           Value: !Sub ${EnvironmentName}-database
 
   #############################################
+  # RDS MSSQL Enterprise (Bahrain / me-south-1)
+  #############################################
+  MSSQLInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub ${EnvironmentName}-mssql-database
+      DBInstanceClass: db.r5.24xlarge
+      Engine: sqlserver-ee
+      EngineVersion: '15.00'
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref MSSQLPassword
+      AllocatedStorage: '500'
+      StorageType: gp2
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref MSSQLSecurityGroup
+      MultiAZ: true
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 7
+      DeletionProtection: false
+      LicenseModel: license-included
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-mssql-database
+
+  #############################################
   # EC2 Auto Scaling Group (Previous Generation Instances)
   #############################################
   EC2InstanceRole:
