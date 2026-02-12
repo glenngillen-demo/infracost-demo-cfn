@@ -636,6 +636,12 @@ Outputs:
     Export:
       Name: !Sub ${EnvironmentName}-rds-endpoint
 
+  MSSQLEndpoint:
+    Description: MSSQL Server Database Endpoint
+    Value: !GetAtt MSSQLInstance.Endpoint.Address
+    Export:
+      Name: !Sub ${EnvironmentName}-mssql-endpoint
+
   AutoScalingGroupName:
     Description: Auto Scaling Group Name
     Value: !Ref AutoScalingGroup
