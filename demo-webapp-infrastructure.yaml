@@ -250,6 +250,25 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName}-rds-sg
 
+  MSSQLSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-mssql-sg
+      GroupDescription: Security group for MSSQL Server database
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1433
+          ToPort: 1433
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 1433
+          ToPort: 1433
+          SourceSecurityGroupId: !Ref EC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-mssql-sg
+
   #############################################
   # Application Load Balancer
   #############################################
