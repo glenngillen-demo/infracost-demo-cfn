@@ -604,7 +604,7 @@ Resources:
       LaunchTemplateName: !Sub ${EnvironmentName}-launch-template
       LaunchTemplateData:
         ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2}}'
-        InstanceType: t2.large
+        InstanceType: t2.medium
         KeyName: !Ref EC2KeyPair
         IamInstanceProfile:
           Arn: !GetAtt EC2InstanceProfile.Arn
@@ -633,8 +633,8 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref EC2LaunchTemplate
         Version: !GetAtt EC2LaunchTemplate.LatestVersionNumber
-      MinSize: '2'
-      MaxSize: '6'
+      MinSize: '6'
+      MaxSize: '12'
       DesiredCapacity: '15'
       VPCZoneIdentifier:
         - !Ref PrivateSubnet1
