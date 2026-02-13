@@ -522,6 +522,56 @@ Resources:
           Value: !Sub ${EnvironmentName}-mssql-database
 
   #############################################
+  # Redshift Cluster
+  #############################################
+  RedshiftCluster:
+    Type: AWS::Redshift::Cluster
+    Properties:
+      ClusterIdentifier: !Sub ${EnvironmentName}-redshift
+      ClusterType: single-node
+      NodeType: ra3.16xlarge
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBName: !Sub ${EnvironmentName}dw
+      ClusterSubnetGroupName: !Ref RedshiftSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref RedshiftSecurityGroup
+      PubliclyAccessible: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-redshift
+
+  RedshiftSubnetGroup:
+    Type: AWS::Redshift::ClusterSubnetGroup
+    Properties:
+      Description: Subnet group for Redshift cluster
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-redshift-subnet-group
+
+  RedshiftSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-redshift-sg
+      GroupDescription: Security group for Redshift cluster
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5439
+          ToPort: 5439
+          SourceSecurityGroupId: !Ref ECSSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 5439
+          ToPort: 5439
+          SourceSecurityGroupId: !Ref EC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-redshift-sg
+
+  #############################################
   # EC2 Auto Scaling Group (Previous Generation Instances)
   #############################################
   EC2InstanceRole:
