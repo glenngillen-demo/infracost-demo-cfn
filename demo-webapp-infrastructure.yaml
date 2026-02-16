@@ -44,16 +44,10 @@ Resources:
       CidrBlock: !Ref VpcCIDR
       EnableDnsHostnames: true
       EnableDnsSupport: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-vpc
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-igw
 
   InternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -68,9 +62,6 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs '']
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-public-subnet-1
 
   PublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -79,9 +70,6 @@ Resources:
       AvailabilityZone: !Select [1, !GetAZs '']
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-public-subnet-2
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -90,9 +78,6 @@ Resources:
       AvailabilityZone: !Select [0, !GetAZs '']
       CidrBlock: 10.0.10.0/24
       MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-private-subnet-1
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -101,9 +86,6 @@ Resources:
       AvailabilityZone: !Select [1, !GetAZs '']
       CidrBlock: 10.0.11.0/24
       MapPublicIpOnLaunch: false
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-private-subnet-2
 
   NatGatewayEIP:
     Type: AWS::EC2::EIP
@@ -116,17 +98,11 @@ Resources:
     Properties:
       AllocationId: !GetAtt NatGatewayEIP.AllocationId
       SubnetId: !Ref PublicSubnet1
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-nat-gateway
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-public-rt
 
   DefaultPublicRoute:
     Type: AWS::EC2::Route
@@ -152,9 +128,6 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-private-rt
 
   DefaultPrivateRoute:
     Type: AWS::EC2::Route
@@ -193,9 +166,6 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-alb-sg
 
   ECSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -208,9 +178,6 @@ Resources:
           FromPort: 8080
           ToPort: 8080
           SourceSecurityGroupId: !Ref ALBSecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ecs-sg
 
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -227,9 +194,6 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ec2-sg
 
   RDSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -246,9 +210,6 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           SourceSecurityGroupId: !Ref EC2SecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-rds-sg
 
   MSSQLSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -265,9 +226,6 @@ Resources:
           FromPort: 1433
           ToPort: 1433
           SourceSecurityGroupId: !Ref EC2SecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-mssql-sg
 
   #############################################
   # Application Load Balancer
@@ -283,9 +241,6 @@ Resources:
       Subnets:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-alb
 
   ALBTargetGroupECS:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -302,9 +257,6 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 3
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ecs-tg
 
   ALBTargetGroupEC2:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -321,9 +273,6 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 3
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ec2-tg
 
   ALBListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -358,9 +307,6 @@ Resources:
       ClusterSettings:
         - Name: containerInsights
           Value: enabled
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-cluster
 
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
@@ -375,9 +321,6 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ecs-execution-role
 
   ECSTaskRole:
     Type: AWS::IAM::Role
@@ -390,9 +333,6 @@ Resources:
             Principal:
               Service: ecs-tasks.amazonaws.com
             Action: sts:AssumeRole
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ecs-task-role
 
   ECSTaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -423,9 +363,6 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
           Essential: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-task-definition
 
   ECSLogGroup:
     Type: AWS::Logs::LogGroup
@@ -454,9 +391,6 @@ Resources:
         - ContainerName: webapp
           ContainerPort: 8080
           TargetGroupArn: !Ref ALBTargetGroupECS
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-webapp-service
 
   #############################################
   # RDS Database (Previous Generation Instance)
@@ -469,9 +403,6 @@ Resources:
       SubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-db-subnet-group
 
   RDSInstance:
     Type: AWS::RDS::DBInstance
@@ -491,9 +422,6 @@ Resources:
       PubliclyAccessible: false
       BackupRetentionPeriod: 7
       DeletionProtection: false
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-database
 
   #############################################
   # RDS MSSQL Enterprise (Bahrain / me-south-1)
@@ -517,9 +445,6 @@ Resources:
       BackupRetentionPeriod: 7
       DeletionProtection: false
       LicenseModel: license-included
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-mssql-database
 
   #############################################
   # Redshift Cluster
@@ -537,9 +462,6 @@ Resources:
       VpcSecurityGroupIds:
         - !Ref RedshiftSecurityGroup
       PubliclyAccessible: false
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-redshift
 
   RedshiftSubnetGroup:
     Type: AWS::Redshift::ClusterSubnetGroup
@@ -548,9 +470,6 @@ Resources:
       SubnetIds:
         - !Ref PrivateSubnet1
         - !Ref PrivateSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-redshift-subnet-group
 
   RedshiftSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -567,9 +486,6 @@ Resources:
           FromPort: 5439
           ToPort: 5439
           SourceSecurityGroupId: !Ref EC2SecurityGroup
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-redshift-sg
 
   #############################################
   # EC2 Auto Scaling Group (Previous Generation Instances)
@@ -587,9 +503,6 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-ec2-role
 
   EC2InstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -643,10 +556,6 @@ Resources:
         - !Ref ALBTargetGroupEC2
       HealthCheckType: ELB
       HealthCheckGracePeriod: 300
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-asg-instance
-          PropagateAtLaunch: true
 
   ScalingPolicy:
     Type: AWS::AutoScaling::ScalingPolicy
