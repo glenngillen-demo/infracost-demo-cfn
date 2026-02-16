@@ -422,6 +422,9 @@ Resources:
       PubliclyAccessible: false
       BackupRetentionPeriod: 7
       DeletionProtection: false
+      Tags:
+        - Key: Bloop
+          Value: !Sub ${EnvironmentName}-web-server
 
   #############################################
   # RDS MSSQL Enterprise (Bahrain / me-south-1)
